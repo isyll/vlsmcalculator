@@ -1,5 +1,5 @@
 function App() {
-  return <main className='dark:bg-black bg-white h-screen w-screen'></main>
+  return <main className='dark:bg-black bg-blue h-full w-full'></main>
 }
 
 export default App
