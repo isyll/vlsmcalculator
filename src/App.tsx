@@ -1,5 +1,11 @@
+import NetworkForm from './components/NetworkForm'
+
 function App() {
-  return <main className='dark:bg-black bg-blue h-full w-full'></main>
+  return (
+    <main className='flex place-content-center h-full w-full'>
+      <NetworkForm />
+    </main>
+  )
 }
 
 export default App
