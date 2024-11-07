@@ -13,6 +13,10 @@ export default class IPAddress {
     return this._address
   }
 
+  toString() {
+    return this.address
+  }
+
   toInteger(): number {
     return this._address
       .split('.')

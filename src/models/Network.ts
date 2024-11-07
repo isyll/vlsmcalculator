@@ -1,19 +1,18 @@
 import IPAddress from './IPAddress'
 
 export default class Network {
-  constructor(private baseIP: IPAddress, private prefix: number) {}
+  constructor(
+    private baseIP: IPAddress,
+    private prefix: number,
+  ) {}
 
-  get subnetMask(): number {
-    return (-1 << (32 - this.prefix)) >>> 0
-  }
-
-  get subnetMaskStr(): string {
-    const mask = IPAddress.fromInteger(this.subnetMask)
-    return mask.address
+  get subnetMask(): IPAddress {
+    const mask = (-1 << (32 - this.prefix)) >>> 0
+    return IPAddress.fromInteger(mask)
   }
 
   get networkAddress(): IPAddress {
-    const networkAddress = this.baseIP.toInteger() & this.subnetMask
+    const networkAddress = this.baseIP.toInteger() & this.subnetMask.toInteger()
     return IPAddress.fromInteger(networkAddress)
   }
 
