@@ -1,5 +1,13 @@
 export default class IPAddress {
-  constructor(private _address: string) {}
+  private _address: string
+
+  constructor(address: string) {
+    if (!IPAddress.isValidIP(address)) {
+      throw new Error('Invalid IP address')
+    }
+
+    this._address = address
+  }
 
   get address() {
     return this._address
@@ -19,5 +27,11 @@ export default class IPAddress {
       intValue & 255,
     ]
     return new IPAddress(bytes.join('.'))
+  }
+
+  static isValidIP(address: string): boolean {
+    const ipRegex =
+      /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/
+    return ipRegex.test(address)
   }
 }

@@ -7,4 +7,6 @@ const subnetSchema = z.object({
     .min(1, { message: "The subnet's size must be greater than 1." }),
 })
 
+export type Subnet = z.infer<typeof subnetSchema>
+
 export default subnetSchema

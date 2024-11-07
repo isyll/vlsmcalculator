@@ -1,10 +1,7 @@
 import IPAddress from './IPAddress'
 
 export default class Network {
-  constructor(
-    private baseIP: IPAddress,
-    private prefix: number,
-  ) {}
+  constructor(private baseIP: IPAddress, private prefix: number) {}
 
   get subnetMask(): number {
     return (-1 << (32 - this.prefix)) >>> 0
@@ -35,5 +32,12 @@ export default class Network {
     }
 
     return availableIPs
+  }
+
+  equals(other: Network): boolean {
+    return (
+      this.networkAddress.toInteger() === other.networkAddress.toInteger() &&
+      this.prefix === other.prefix
+    )
   }
 }

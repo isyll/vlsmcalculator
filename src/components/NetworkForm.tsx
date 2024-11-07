@@ -22,20 +22,17 @@ const defaultSubnet = (text: string) => ({
 })
 
 type NetworkFormProps = {
-  numberOfSubnets?: number
+  numSubnets?: number
   onSubmit?: (data: NetworkFormData) => void
 }
 
-const NetworkForm: FC<NetworkFormProps> = ({
-  onSubmit,
-  numberOfSubnets = 1,
-}) => {
+const NetworkForm: FC<NetworkFormProps> = ({ onSubmit, numSubnets = 1 }) => {
   const form = useForm<NetworkFormData>({
     resolver: zodResolver(networkFormSchema),
     defaultValues: {
-      address: '',
-      mask: '',
-      subnets: Array.from({ length: numberOfSubnets }, (_, index) =>
+      address: '192.168.1.0',
+      mask: '24',
+      subnets: Array.from({ length: numSubnets }, (_, index) =>
         defaultSubnet(index + ''),
       ),
     },
@@ -102,7 +99,7 @@ const NetworkForm: FC<NetworkFormProps> = ({
           />
         </div>
         <div className='flex justify-between'>
-          <div>Subnets</div>
+          <h3>Subnets</h3>
           <button
             type='button'
             onClick={() =>
