@@ -5,7 +5,7 @@ import { NetworkFormData } from './validation/networkFormSchema'
 import Network from './models/Network'
 import { divideNetworkWithVLSM } from './services/subnetting'
 import IPAddress from './models/IPAddress'
-import { Subnet } from './validation/subnetSchema'
+import CalculatedData from './types/CalculatedData'
 
 function App() {
   const [errMsg, setErrMsg] = useState('')
@@ -23,16 +23,14 @@ function App() {
         setErrMsg('')
       }
     } catch (e) {
-      setNetworks([])
       if (e instanceof Error) {
+        setNetworks([])
         setErrMsg(e.message)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  const [networks, setNetworks] = useState<({ network: Network } & Subnet)[]>(
-    [],
-  )
+  const [networks, setNetworks] = useState<CalculatedData[]>([])
 
   return (
     <main className='flex place-content-center h-full w-full'>
@@ -44,7 +42,7 @@ function App() {
 }
 
 type MemoizedSubnetSummaryProps = Readonly<{
-  networks: ({ network: Network } & Subnet)[]
+  networks: CalculatedData[]
 }>
 
 const MemoizedSubnetSummary = memo(

@@ -1,4 +1,3 @@
-import Network from '@/models/Network'
 import { FC } from 'react'
 import {
   Table,
@@ -9,10 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from './ui/table'
-import { Subnet } from '@/validation/subnetSchema'
+import CalculatedData from '@/types/CalculatedData'
 
 type SubnetSummaryProps = {
-  networks: ({ network: Network } & Subnet)[]
+  networks: CalculatedData[]
 }
 
 const SubnetSummary: FC<SubnetSummaryProps> = ({ networks }) => {
@@ -36,9 +35,9 @@ const SubnetSummary: FC<SubnetSummaryProps> = ({ networks }) => {
         </TableHeader>
         <TableBody>
           {networks.map((networkItem, index) => {
-            const network = networkItem.network
             const name = networkItem.name
             const size = networkItem.size
+            const network = networkItem.network
             const availableIPs = network.availableIPs
 
             return (
