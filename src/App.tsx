@@ -54,7 +54,9 @@ const MemoizedSubnetSummary = memo(
 
     for (let i = 0; i < prevProps.networks.length; i++) {
       if (
-        !prevProps.networks[i].network.equals(nextProps.networks[i].network)
+        !prevProps.networks[i].network.equals(nextProps.networks[i].network) ||
+        prevProps.networks[i].name !== nextProps.networks[i].name ||
+        prevProps.networks[i].size !== nextProps.networks[i].size
       ) {
         return false
       }

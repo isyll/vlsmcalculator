@@ -89,12 +89,7 @@ const NetworkForm: FC<NetworkFormProps> = ({ onSubmit, numSubnets = 2 }) => {
               <FormItem>
                 <FormLabel>Mask</FormLabel>
                 <FormControl>
-                  <Input
-                    size={3}
-                    maxLength={2}
-                    {...field}
-                    onChange={(e) => field.onChange(+e.target.value)}
-                  />
+                  <Input type='number' size={3} maxLength={2} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "deploy": "node deploy.js",
-    "build-deploy": "npm run build && npm run deploy"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "author": {
     "name": "Ibrahima Sylla",

@@ -1,5 +1,6 @@
 import Network from '@/models/Network'
 import { Subnet } from '@/validation/subnetSchema'
+import IPAddress from '@/models/IPAddress.ts'
 
 export function divideNetworkWithVLSM(
   network: Network,
@@ -36,8 +37,12 @@ export function divideNetworkWithVLSM(
 
       continue
     }
-    break
-    //const previousSubnet = subnetsData[i - 1]
+
+    const prefix = 32 - Math.ceil(Math.log2(subnet.size + 2))
+    const networkAddress = subnetsData[i - 1].broadcastAddress.toInteger() + 1
+    const newSubnet = new Network(IPAddress.fromInteger(networkAddress), prefix)
+
+    subnetsData.push(newSubnet)
   }
 
   return subnetsData
