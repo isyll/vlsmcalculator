@@ -1,8 +1,8 @@
 import networkFormSchema, {
   NetworkFormData,
 } from '@/validation/networkFormSchema'
-import { ChangeEvent, FC, useCallback } from 'react'
-import { ControllerRenderProps, useFieldArray, useForm } from 'react-hook-form'
+import { FC, useCallback, useState } from 'react'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import {
@@ -14,47 +14,50 @@ import {
   FormMessage,
 } from './ui/form'
 import { Input } from './ui/input'
-import { CirclePlus } from 'lucide-react'
+import { CircleMinus } from 'lucide-react'
+import { Subnet } from '@/validation/subnetSchema'
+import { Button } from './ui/button'
+import { FaPlus } from 'react-icons/fa'
 
-const defaultSubnet = (text: string) => ({
-  name: text,
-  size: 1,
-})
-
-type NetworkFormProps = {
-  numSubnets?: number
-  onSubmit?: (data: NetworkFormData) => void
+const validateUniqueNames = (subnets: Subnet[]) => {
+  const names = subnets.map((subnet) => subnet.name)
+  const uniqueNames = new Set(names)
+  return names.length === uniqueNames.size
 }
 
-const NetworkForm: FC<NetworkFormProps> = ({ onSubmit, numSubnets = 1 }) => {
+type NetworkFormProps = Readonly<{
+  numSubnets?: number
+  onSubmit?: (data: NetworkFormData) => void
+}>
+
+const NetworkForm: FC<NetworkFormProps> = ({ onSubmit, numSubnets = 2 }) => {
   const form = useForm<NetworkFormData>({
     resolver: zodResolver(networkFormSchema),
     defaultValues: {
       address: '192.168.1.0',
-      mask: '24',
-      subnets: Array.from({ length: numSubnets }, (_, index) =>
-        defaultSubnet(index + ''),
-      ),
+      mask: 24,
+      subnets: Array.from({ length: numSubnets }, (_, index) => ({
+        name: `LAN_${index + 1}`,
+        size: 20,
+      })),
     },
     reValidateMode: 'onChange',
   })
   const subnetsArray = useFieldArray({ control: form.control, name: 'subnets' })
+  const [error, setError] = useState<string | null>(null)
 
   const onSubmitForm = useCallback((data: NetworkFormData) => {
+    const isValid = validateUniqueNames(data.subnets)
+    if (!isValid) {
+      setError('Subnet names must be unique')
+      return
+    }
+    if (error) {
+      setError(null)
+    }
     onSubmit?.(data)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  const handleMaskChange = useCallback(
-    (
-      e: ChangeEvent<HTMLInputElement>,
-      field: ControllerRenderProps<NetworkFormData, 'mask'>,
-    ) => {
-      const { value } = e.target
-      const isValid = /^\d*$/.test(value) && (value === '' || +value <= 32)
-      field.onChange(isValid ? value : value.slice(0, -1))
-    },
-    [],
-  )
 
   return (
     <Form {...form}>
@@ -90,7 +93,7 @@ const NetworkForm: FC<NetworkFormProps> = ({ onSubmit, numSubnets = 1 }) => {
                     size={3}
                     maxLength={2}
                     {...field}
-                    onChange={(e) => handleMaskChange(e, field)}
+                    onChange={(e) => field.onChange(+e.target.value)}
                   />
                 </FormControl>
                 <FormMessage />
@@ -98,37 +101,74 @@ const NetworkForm: FC<NetworkFormProps> = ({ onSubmit, numSubnets = 1 }) => {
             )}
           />
         </div>
-        <div className='flex justify-between'>
+        {error && <p className='text-red-500'>{error}</p>}
+        <div className='flex gap-3'>
           <h3>Subnets</h3>
           <button
             type='button'
             onClick={() =>
-              subnetsArray.append(
-                defaultSubnet(subnetsArray.fields.length + 1 + ''),
-              )
+              subnetsArray.append({
+                name: `LAN_${subnetsArray.fields.length + 1}`,
+                size: 20,
+              })
             }
           >
-            <CirclePlus />
+            <FaPlus />
           </button>
         </div>
-        <FormField
-          control={form.control}
-          name='subnets'
-          render={() => (
-            <>
-              {subnetsArray.fields.map((field, index) => (
-                <FormItem key={index}>
-                  <FormLabel>Subnet {index + 1}</FormLabel>
-                  <FormControl>
-                    <Input maxLength={2} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              ))}
-            </>
-          )}
-        />
-        <Input type='submit' />
+        <>
+          {subnetsArray.fields.map((field, index) => (
+            <div key={field.id} className='flex items-end gap-2'>
+              <div className='flex gap-2'>
+                <FormField
+                  control={form.control}
+                  name={`subnets.${index}.name`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input type='text' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`subnets.${index}.size`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Size</FormLabel>
+                      <FormControl>
+                        <Input
+                          type='number'
+                          {...field}
+                          onChange={(e) => field.onChange(+e.target.value)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <button
+                type='button'
+                className='mb-2'
+                onClick={() => {
+                  subnetsArray.remove(index)
+                }}
+              >
+                <CircleMinus />
+              </button>
+            </div>
+          ))}
+        </>
+        <Button
+          type='submit'
+          className='disabled:cursor-default cursor-pointer mt-3 border border-slate-600'
+        >
+          Submit
+        </Button>
       </form>
     </Form>
   )

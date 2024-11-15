@@ -11,7 +11,8 @@ function App() {
   const [errMsg, setErrMsg] = useState('')
   const onSubmit = useCallback((data: NetworkFormData) => {
     const networkIP = new IPAddress(data.address)
-    const network = new Network(networkIP, +data.mask)
+    const network = new Network(networkIP, data.mask)
+
     try {
       const subnets: Network[] = divideNetworkWithVLSM(network, data.subnets)
       const subnetData = subnets.map((subnet, index) => ({
@@ -19,21 +20,18 @@ function App() {
         ...data.subnets[index],
       }))
       setNetworks(subnetData)
-      if (errMsg !== '') {
-        setErrMsg('')
-      }
+      setErrMsg('')
     } catch (e) {
       if (e instanceof Error) {
         setNetworks([])
         setErrMsg(e.message)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const [networks, setNetworks] = useState<CalculatedData[]>([])
 
   return (
-    <main className='flex place-content-center h-full w-full'>
+    <main className='flex flex-col items-center h-full w-full'>
       <NetworkForm onSubmit={onSubmit} />
       <MemoizedSubnetSummary networks={networks} />
       {errMsg && <h3>{errMsg}</h3>}

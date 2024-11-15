@@ -1,10 +1,7 @@
 import { z } from 'zod'
 
-const cidrSchema = z
-  .string()
-  .regex(
-    /^(3[0-2]|[1-2]?[0-9])$/,
-    'Invalid CIDR notation, must be between /0 and /32',
-  )
+const msg = 'Invalid CIDR notation, must be between /0 and /32'
+
+const cidrSchema = z.number().int().min(0, msg).max(32, msg)
 
 export default cidrSchema

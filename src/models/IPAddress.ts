@@ -1,16 +1,8 @@
 export default class IPAddress {
-  private _address: string
-
-  constructor(address: string) {
+  constructor(private readonly address: string) {
     if (!IPAddress.isValidIP(address)) {
       throw new Error('Invalid IP address')
     }
-
-    this._address = address
-  }
-
-  get address() {
-    return this._address
   }
 
   toString() {
@@ -18,9 +10,11 @@ export default class IPAddress {
   }
 
   toInteger(): number {
-    return this._address
-      .split('.')
-      .reduce((acc, byte) => (acc << 8) + parseInt(byte), 0)
+    return (
+      this.address
+        .split('.')
+        .reduce((acc, byte) => (acc << 8) + parseInt(byte), 0) >>> 0
+    )
   }
 
   static fromInteger(intValue: number): IPAddress {
