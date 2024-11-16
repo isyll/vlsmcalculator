@@ -30,6 +30,10 @@ type NetworkFormProps = Readonly<{
   onSubmit?: (data: NetworkFormData) => void
 }>
 
+const alphabet = Array.from({ length: 26 }, (_, i) =>
+  String.fromCharCode(65 + i),
+)
+
 const NetworkForm: FC<NetworkFormProps> = ({ onSubmit, numSubnets = 2 }) => {
   const form = useForm<NetworkFormData>({
     resolver: zodResolver(networkFormSchema),
@@ -37,7 +41,7 @@ const NetworkForm: FC<NetworkFormProps> = ({ onSubmit, numSubnets = 2 }) => {
       address: '192.168.1.0',
       mask: 24,
       subnets: Array.from({ length: numSubnets }, (_, index) => ({
-        name: `LAN_${index + 1}`,
+        name: `LAN_${alphabet[index]}`,
         size: 20,
       })),
     },
@@ -102,8 +106,9 @@ const NetworkForm: FC<NetworkFormProps> = ({ onSubmit, numSubnets = 2 }) => {
           <button
             type='button'
             onClick={() =>
+              subnetsArray.fields.length < 26 &&
               subnetsArray.append({
-                name: `LAN_${subnetsArray.fields.length + 1}`,
+                name: `LAN_${alphabet[subnetsArray.fields.length]}`,
                 size: 20,
               })
             }

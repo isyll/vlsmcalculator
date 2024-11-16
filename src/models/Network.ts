@@ -29,7 +29,7 @@ export default class Network {
   get availableIPs(): IPAddress[] {
     const network = this.networkAddress.toInteger()
     const broadcast = this.broadcastAddress.toInteger()
-    const availableIPs = []
+    const availableIPs: IPAddress[] = []
 
     for (let ip = network + 1; ip < broadcast; ip++) {
       availableIPs.push(IPAddress.fromInteger(ip))
